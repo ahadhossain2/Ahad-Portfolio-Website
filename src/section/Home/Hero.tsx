@@ -507,7 +507,7 @@ const Hero: React.FC = () => {
       {/* ===================================================
           IMPROVED SCROLL CUE
       =================================================== */}
-      <motion.div className="mt-7 ">
+      <motion.div className="mt-10">
         <motion.button
           type="button"
           aria-label="Scroll down"

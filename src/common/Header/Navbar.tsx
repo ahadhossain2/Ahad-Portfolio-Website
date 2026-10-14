@@ -36,7 +36,7 @@ const Navbar = () => {
         dark:shadow-black/75
       "
     >
-      <nav className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 sm:px-4">
+      <nav className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-5">
         {/* Logo */}
         <Link
           to="/home"

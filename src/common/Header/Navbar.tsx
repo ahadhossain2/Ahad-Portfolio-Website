@@ -80,6 +80,56 @@ import { Link } from "react-router-dom";
 import MobMenu from "./MobMenu";
 import ThemeToggle from "../ThemeToggle";
 
+type SvgProps = SVGProps<SVGSVGElement>;
+
+/* ---------- Custom artwork (logo + gem) ---------- */
+const Logo = (p: SvgProps) => (
+  <svg viewBox="0 0 48 44" {...p}>
+    <defs>
+      <linearGradient id="logo-g" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0" stopColor="#0ea5c6" />
+        <stop offset="1" stopColor="#5eead4" />
+      </linearGradient>
+    </defs>
+    <path d="M22 2 4 42h11l7-18 5 12h10L22 2Z" fill="url(#logo-g)" />
+    <path d="M28 20l16 22H30l-6-9 4-13Z" fill="#0d9488" opacity=".85" />
+  </svg>
+);
+
+const Gem = (p: SvgProps) => (
+  <svg viewBox="0 0 320 240" fill="none" {...p}>
+    <defs>
+      <linearGradient id="gem-a" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#5eead4" />
+        <stop offset="1" stopColor="#0891b2" />
+      </linearGradient>
+      <linearGradient id="gem-b" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#0e7490" />
+        <stop offset="1" stopColor="#1e2a5a" />
+      </linearGradient>
+      <radialGradient id="gem-glow" cx=".5" cy=".5" r=".5">
+        <stop offset="0" stopColor="#22d3ee" stopOpacity=".35" />
+        <stop offset="1" stopColor="#22d3ee" stopOpacity="0" />
+      </radialGradient>
+    </defs>
+    <ellipse cx="165" cy="215" rx="70" ry="8" fill="url(#gem-glow)" />
+    <ellipse
+      cx="160"
+      cy="120"
+      rx="150"
+      ry="55"
+      transform="rotate(-18 160 120)"
+      stroke="#22d3ee"
+      strokeOpacity=".7"
+    />
+    <path d="M160 30 110 110l50 80 50-80-50-80Z" fill="url(#gem-b)" />
+    <path d="M160 30 110 110l50 22V30Z" fill="url(#gem-a)" />
+    <path d="M160 30v102l50-22-50-80Z" fill="#0e9bb5" opacity=".8" />
+    <path d="M110 110l50 22 50-22-50 80-50-80Z" fill="#1e3a8a" opacity=".85" />
+    <circle cx="272" cy="87" r="4.5" fill="#22d3ee" />
+  </svg>
+);
+
 const Navbar: React.FC = () => {
   return (
     <header
@@ -98,7 +148,31 @@ const Navbar: React.FC = () => {
       <nav className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 sm:px-4">
         {/* Logo */}
         <div className="flex items-center gap-x-3">
+          {/* Decorative waves */}
+      <svg
+        aria-hidden
+        viewBox="0 0 200 200"
+        className="absolute bottom-16 left-0 -z-10 hidden h-40 w-40 text-teal-400/60 lg:block"
+      >
+        <path
+          d="M0 40c40 20 50 90 100 120"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        />
+      </svg>
+
           <Link
+              To="/home"
+              className="inline-flex items-center gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-400"
+            >
+              <Logo className="h-9 w-10 sm:h-11 sm:w-12" />
+              <span className="text-2xl font-bold tracking-[0.12em] text-white sm:text-3xl">
+                AHAD<span className="text-teal-400">.DEV</span>
+              </span>
+            </Link>
+
+          {/* <Link
             to="/home"
             aria-label="Ahad.Dev home"
             className="
@@ -113,7 +187,7 @@ const Navbar: React.FC = () => {
               alt="SoftTech Logo"
               className="mr-2 h-16 w-24 object-contain sm:mr-3 sm:w-28"
             />
-          </Link>
+          </Link> */}
         </div>
 
         {/* Desktop Menu */}

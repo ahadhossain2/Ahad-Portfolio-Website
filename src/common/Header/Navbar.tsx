@@ -73,13 +73,13 @@
 
 // export default Navbar;
 
-import React from "react";
 import DesktopMenu from "./DesktopMenu";
 import { Menus } from "../../Data/utils";
 import { Link } from "react-router-dom";
 import MobMenu from "./MobMenu";
 import ThemeToggle from "../ThemeToggle";
 
+type SvgProps = SVGProps<SVGSVGElement>;
 
 /* ---------- Custom artwork (logo + gem) ---------- */
 const Logo = (p: SvgProps) => (

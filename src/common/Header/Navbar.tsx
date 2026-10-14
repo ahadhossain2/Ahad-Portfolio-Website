@@ -80,7 +80,6 @@ import { Link } from "react-router-dom";
 import MobMenu from "./MobMenu";
 import ThemeToggle from "../ThemeToggle";
 
-type SvgProps = SVGProps<SVGSVGElement>;
 
 /* ---------- Custom artwork (logo + gem) ---------- */
 const Logo = (p: SvgProps) => (
@@ -96,41 +95,7 @@ const Logo = (p: SvgProps) => (
   </svg>
 );
 
-const Gem = (p: SvgProps) => (
-  <svg viewBox="0 0 320 240" fill="none" {...p}>
-    <defs>
-      <linearGradient id="gem-a" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stopColor="#5eead4" />
-        <stop offset="1" stopColor="#0891b2" />
-      </linearGradient>
-      <linearGradient id="gem-b" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stopColor="#0e7490" />
-        <stop offset="1" stopColor="#1e2a5a" />
-      </linearGradient>
-      <radialGradient id="gem-glow" cx=".5" cy=".5" r=".5">
-        <stop offset="0" stopColor="#22d3ee" stopOpacity=".35" />
-        <stop offset="1" stopColor="#22d3ee" stopOpacity="0" />
-      </radialGradient>
-    </defs>
-    <ellipse cx="165" cy="215" rx="70" ry="8" fill="url(#gem-glow)" />
-    <ellipse
-      cx="160"
-      cy="120"
-      rx="150"
-      ry="55"
-      transform="rotate(-18 160 120)"
-      stroke="#22d3ee"
-      strokeOpacity=".7"
-    />
-    <path d="M160 30 110 110l50 80 50-80-50-80Z" fill="url(#gem-b)" />
-    <path d="M160 30 110 110l50 22V30Z" fill="url(#gem-a)" />
-    <path d="M160 30v102l50-22-50-80Z" fill="#0e9bb5" opacity=".8" />
-    <path d="M110 110l50 22 50-22-50 80-50-80Z" fill="#1e3a8a" opacity=".85" />
-    <circle cx="272" cy="87" r="4.5" fill="#22d3ee" />
-  </svg>
-);
-
-const Navbar: React.FC = () => {
+const Navbar = () => {
   return (
     <header
       className="
@@ -163,7 +128,7 @@ const Navbar: React.FC = () => {
       </svg>
 
           <Link
-              To="/home"
+              to="/home"
               className="inline-flex items-center gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-400"
             >
               <Logo className="h-9 w-10 sm:h-11 sm:w-12" />

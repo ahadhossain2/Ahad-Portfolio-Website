@@ -1,4 +1,3 @@
-
 import Hero from "../../section/Home/Hero";
 import StatsSection from "../../section/Home/StatsSection";
 import Philosophy from "../../section/Home/Philosophy";

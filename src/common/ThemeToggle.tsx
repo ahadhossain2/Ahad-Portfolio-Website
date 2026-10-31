@@ -3,18 +3,17 @@ import { Monitor, Moon, Sun, type LucideIcon } from "lucide-react";
 
 type Theme = "light" | "system" | "dark";
 
-const STORAGE_KEY = "theme"; // index.html-er inline script-er key-er shathe mil rakho
+const STORAGE_KEY = "theme";
 
-const ORDER: Theme[] = ["light", "system", "dark"];
+const THEME_ORDER: Theme[] = ["light", "system", "dark"];
 
-const META: Record<
-  Theme,
-  {
-    label: string;
-    Icon: LucideIcon;
-    description: string;
-  }
-> = {
+type ThemeMeta = {
+  label: string;
+  Icon: LucideIcon;
+  description: string;
+};
+
+const THEME_META: Record<Theme, ThemeMeta> = {
   light: {
     label: "Light Mode",
     Icon: Sun,
@@ -32,11 +31,15 @@ const META: Record<
   },
 };
 
-function applyTheme(theme: Theme) {
-  const isDark =
-    theme === "dark" ||
-    (theme === "system" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
+/**
+ * Applies the selected theme to the document root.
+ */
+function applyTheme(theme: Theme): void {
+  const systemPrefersDark = window.matchMedia(
+    "(prefers-color-scheme: dark)",
+  ).matches;
+
+  const isDark = theme === "dark" || (theme === "system" && systemPrefersDark);
 
   const root = document.documentElement;
 
@@ -44,14 +47,23 @@ function applyTheme(theme: Theme) {
   root.style.colorScheme = isDark ? "dark" : "light";
 }
 
+/**
+ * Reads the saved theme preference.
+ */
 function getSavedTheme(): Theme {
-  if (typeof window === "undefined") return "system";
+  if (typeof window === "undefined") {
+    return "system";
+  }
 
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const savedTheme = localStorage.getItem(STORAGE_KEY);
 
-    if (saved === "light" || saved === "system" || saved === "dark") {
-      return saved;
+    if (
+      savedTheme === "light" ||
+      savedTheme === "system" ||
+      savedTheme === "dark"
+    ) {
+      return savedTheme;
     }
   } catch {
     // localStorage may be unavailable.
@@ -60,57 +72,65 @@ function getSavedTheme(): Theme {
   return "system";
 }
 
-export default function ThemeToggle() {
-  // Lazy init: icon first render-e-i thake, null state lagbe na
+const ThemeToggle = () => {
   const [theme, setTheme] = useState<Theme>(getSavedTheme);
 
-  // Apply theme, save preference, and listen for system theme changes.
+  const currentIndex = THEME_ORDER.indexOf(theme);
+
+  const nextTheme = THEME_ORDER[(currentIndex + 1) % THEME_ORDER.length];
+
+  const current = THEME_META[theme];
+  const next = THEME_META[nextTheme];
+
+  const CurrentIcon = current.Icon;
+  const NextIcon = next.Icon;
+
   useEffect(() => {
     applyTheme(theme);
 
     try {
       localStorage.setItem(STORAGE_KEY, theme);
     } catch {
-      // Ignore storage errors.
+      // Continue working if localStorage is unavailable.
     }
 
-    if (theme !== "system") return;
+    if (theme !== "system") {
+      return;
+    }
 
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = () => applyTheme("system");
 
-    mediaQuery.addEventListener("change", handleChange);
+    const handleSystemThemeChange = () => {
+      applyTheme("system");
+    };
+
+    mediaQuery.addEventListener("change", handleSystemThemeChange);
 
     return () => {
-      mediaQuery.removeEventListener("change", handleChange);
+      mediaQuery.removeEventListener("change", handleSystemThemeChange);
     };
   }, [theme]);
 
   const cycleTheme = () => {
-    setTheme(ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length]);
+    setTheme(nextTheme);
   };
 
-  const current = META[theme];
-  const nextTheme = META[ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length]];
-  const Icon = current.Icon;
-
   return (
-    <div className="group/theme relative flex items-center">
-      {/* Theme Toggle Button */}
+    <div className="group/theme relative flex shrink-0 items-center">
       <button
         type="button"
         onClick={cycleTheme}
-        aria-label={`${current.label}. Switch to ${nextTheme.label}`}
+        aria-label={`${current.label}. Switch to ${next.label}`}
+        aria-describedby="theme-toggle-tooltip"
         title={current.label}
         className="
-          relative grid h-10 w-10 shrink-0 place-items-center
-          overflow-hidden rounded-full
+          relative grid h-10 w-10 shrink-0
+          place-items-center overflow-hidden rounded-full
           border border-black/70 bg-white text-slate-700
           transition-[background-color,border-color,color,transform]
           duration-300 ease-in-out
-          hover:border-teal-400
-          hover:bg-teal-50 hover:text-teal-700
-          active:scale-90
+          hover:border-teal-400 hover:bg-teal-50
+          hover:text-teal-700 active:scale-90
           focus-visible:outline-none
           focus-visible:ring-2 focus-visible:ring-teal-500
           focus-visible:ring-offset-2
@@ -132,43 +152,48 @@ export default function ThemeToggle() {
             bg-teal-500/10 opacity-0
             transition-opacity duration-300
             group-hover/theme:opacity-100
+            group-focus-within/theme:opacity-100
           "
         />
 
-        {/* Animated Theme Icon */}
+        {/* Animated theme icon */}
         <span
           key={theme}
+          aria-hidden="true"
           className="
             relative flex items-center justify-center
             animate-theme-icon
           "
         >
-          <Icon size={18} strokeWidth={2} />
+          <CurrentIcon size={18} strokeWidth={2} />
         </span>
       </button>
 
-      {/* Tooltip: visible only while hovering */}
+      {/* Theme tooltip */}
       <div
         id="theme-toggle-tooltip"
         role="tooltip"
         className="
-          pointer-events-none absolute right-0 top-full z-[100]
-          mt-3 w-56 origin-top-right
-          invisible translate-y-1 scale-95 opacity-0
-          rounded-2xl border border-slate-200
-          bg-white p-3.5 text-left
-          shadow-sm shadow-slate-200/80
+          pointer-events-none invisible absolute right-0 top-full
+          z-[100] mt-3 w-56 origin-top-right
+          translate-y-1 scale-95 rounded-2xl
+          border border-slate-200 bg-white p-3.5 text-left
+          opacity-0 shadow-sm shadow-slate-200/80
           transition-[opacity,transform,visibility]
           duration-200 ease-in-out
           group-hover/theme:visible
           group-hover/theme:translate-y-0
           group-hover/theme:scale-100
           group-hover/theme:opacity-100
+          group-focus-within/theme:visible
+          group-focus-within/theme:translate-y-0
+          group-focus-within/theme:scale-100
+          group-focus-within/theme:opacity-100
           dark:border-slate-700 dark:bg-[#050505]
           dark:shadow-black/60
         "
       >
-        {/* Current Theme Information */}
+        {/* Current theme information */}
         <div className="flex items-center gap-3">
           <div
             className="
@@ -178,7 +203,7 @@ export default function ThemeToggle() {
               dark:bg-teal-400/10 dark:text-teal-300
             "
           >
-            <current.Icon size={20} strokeWidth={1.8} />
+            <CurrentIcon size={20} strokeWidth={1.8} />
           </div>
 
           <div className="min-w-0">
@@ -194,8 +219,7 @@ export default function ThemeToggle() {
             <p
               className="
                 mt-0.5 text-xs leading-relaxed text-slate-500
-                transition-colors duration-300
-                dark:text-slate-400
+                transition-colors duration-300 dark:text-slate-400
               "
             >
               {current.description}
@@ -206,7 +230,7 @@ export default function ThemeToggle() {
         {/* Divider */}
         <div className="my-3 border-t border-slate-100 dark:border-slate-800" />
 
-        {/* Next Theme */}
+        {/* Next theme */}
         <div className="flex items-center justify-between gap-2">
           <span className="text-xs text-slate-500 dark:text-slate-400">
             Click to switch
@@ -221,11 +245,13 @@ export default function ThemeToggle() {
               dark:bg-teal-400/10 dark:text-teal-300
             "
           >
-            <nextTheme.Icon size={12} />
-            {nextTheme.label}
+            <NextIcon size={12} />
+            {next.label}
           </span>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default ThemeToggle;

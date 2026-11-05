@@ -1254,7 +1254,6 @@ import type { FC, MouseEvent, SVGProps } from "react";
 import {
   Activity,
   ArrowRight,
-  ArrowRight as ArrowRightIcon,
   ArrowUpRight as ArrowUpRightIcon,
   Atom,
   Braces,
@@ -1276,7 +1275,7 @@ import {
 
 import type { LucideIcon } from "lucide-react";
 
-import image2 from "../../assets/Projects/Projects 1.PNG";
+import image2 from "../../assets/Projects/Projects1.png";
 import image1 from "../../assets/Articels/Modern Bookstore E-Commerce Homepage.png";
 
 import SectionEyebrow from "../../common/SectionEyebrow";

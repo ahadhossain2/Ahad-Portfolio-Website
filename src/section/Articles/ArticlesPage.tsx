@@ -206,9 +206,8 @@ const SummaryModal: FC<{
         throw new Error("Download stream is not supported.");
       }
 
-
       const reader = response.body.getReader();
-      const chunks: Uint8Array[] = [];
+      const chunks: ArrayBuffer[] = [];
 
       let receivedLength = 0;
 
@@ -218,7 +217,12 @@ const SummaryModal: FC<{
         if (done) break;
 
         if (value) {
-          chunks.push(new Uint8Array(value));
+          const chunk = value.buffer.slice(
+            value.byteOffset,
+            value.byteOffset + value.byteLength,
+          ) as ArrayBuffer;
+
+          chunks.push(chunk);
           receivedLength += value.byteLength;
 
           if (hasKnownSize) {

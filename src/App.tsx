@@ -11,7 +11,7 @@ import About from "./components/AboutComponents/About";
 import Experience from "./components/ExperienceComponents/Experience";
 import Skills from "./components/SkillsComponents/Skills";
 import Contact from "./components/ContactComponents/contact";
-
+import { usePageTracking } from "./hooks/usePageTracking";
 import HireMe from "./features/hireme/HireMe";
 import WorkWithMe from "./features/workwithme/WorkWithMe";
 
@@ -83,7 +83,7 @@ const NotFoundLayout = (): JSX.Element => {
 
 function App(): JSX.Element {
   const [isHireMeOpen, setIsHireMeOpen] = useState(false);
-
+usePageTracking();
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
